@@ -1,0 +1,79 @@
+#include <bits/stdc++.h>    // std::sort
+using namespace std;
+
+//Structure of item with it's value and weight
+struct Item{
+    int value, weight;
+};
+
+//Greedy Function
+double fractionalKnapsack(int capactiy, Item *input, int item_count)
+{
+    vector<pair<double,int> > v;
+    for(int i=0; i<item_count; i++)
+    {
+        double ratio = (input[i].value*1.0)/(input[i].weight*1.0);
+        v.push_back({ratio,i});
+    }
+    
+    //sort item on basis of ratio in descending order
+    sort(v.begin(),v.end(), greater<pair<double,int>>());
+    
+    int curr_sw = 0; //current Knapsack weight
+    double total_profit = 0; //current maximum total_profit
+        
+    for(int i=0; i<v.size(); i++)
+    {
+        // If adding item won't overflow the weight, add it completely
+        if(curr_sw+input[v[i].second].weight < capactiy){
+            total_profit += input[v[i].second].value;
+            curr_sw += input[v[i].second].weight;
+        }
+        
+        // If we can't add current item, add its fractional partompletely
+        else{
+            double fract_item = (capactiy-curr_sw)*1.0;
+            total_profit += (fract_item*v[i].first);
+            break;
+        }
+    }
+    
+    return total_profit;
+}
+     
+
+int main()
+{
+    int capactiy;
+    cout<<"Enter Knapsack Capacity/Weight: ";
+    cin>>capactiy;
+    
+    int item_count;
+    cout<<"Enter the no. of items:";
+    cin>>item_count;
+    
+    Item *input = new Item[item_count];
+    cout<<"\nItem Value \t Item Weight \n";
+    for(int i=0; i<item_count; i++)
+    {
+        int v,w;
+        cin>>v>>w;
+        input[i].value=v;
+        input[i].weight=w;
+    }
+    
+    cout<<"\nMaximum Profit is : "<<fractionalKnapsack(capactiy, input, item_count);
+    
+}
+
+/* Output:
+Enter Knapsack Capacity/Weight: 50
+Enter the no. of items: 3
+
+Item Value 	 Item Weight 
+60			10
+100			20
+120			30
+
+Maximum Profit is : 240
+*/
